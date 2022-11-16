@@ -2,3 +2,8 @@
 
 # gwwapi
 This is a python package for the Global Water Watch API.
+
+# Installation 
+```
+> pip install -i https://test.pypi.org/simple/ gwwapi
+```
