@@ -1,5 +1,5 @@
-from ..gwwapi import client as cli
 import pytest 
+from gwwapi import client as cli
 
 class TestClass:
     def test_get_reservoirs(skip=50, limit=2):
@@ -12,7 +12,4 @@ class TestClass:
         # test if reservoir ts is retreived and has expected column header
         assert cli.get_reservoir_ts(3001).json()[0]['name'] == 'surface_water_area_monthly'
 
-
-# gww-api name repo 
-# gwwapi name package
 
