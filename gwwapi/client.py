@@ -8,7 +8,7 @@ import requests
 from shapely.geometry import shape
 
 base_url = "https://api.globalwaterwatch.earth"
-start = datetime.datetime(1980, 1, 1)
+start = datetime.datetime(2010, 1, 1)
 stop = datetime.datetime(2022, 1, 1)
 
 # All functions making server requests
@@ -60,7 +60,21 @@ def get_reservoir_ts(reservoir_id, start=start, stop=stop):
     """
     Get time series data for reservoir with given ID
     """
-    url = f"{base_url}/reservoir/{reservoir_id}/ts"
+    url = f"{base_url}/reservoir/{reservoir_id}/ts/surface_water_area"
+    params = {
+        "start": start.strftime("%Y-%m-%dT%H:%M:%S"),
+        "stop": stop.strftime("%Y-%m-%dT%H:%M:%S")
+    }
+    
+    r = requests.get(url, params=params)
+    _check_request(r)
+    return(r)
+
+def get_reservoir_ts_fitted(reservoir_id, start=start, stop=stop):
+    """
+    Get time series data for reservoir with given ID
+    """
+    url = f"{base_url}/reservoir/{reservoir_id}/ts/surface_water_area_monthly"
     params = {
         "start": start.strftime("%Y-%m-%dT%H:%M:%S"),
         "stop": stop.strftime("%Y-%m-%dT%H:%M:%S")
