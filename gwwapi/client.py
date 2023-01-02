@@ -42,7 +42,7 @@ def get_reservoirs(skip=1, limit=5):
 
     r = requests.get(url, params=params, timeout=2)
     _check_request(r)
-    return(r.json())
+    return(r)
 
 def get_reservoir_by_id(reservoir_id:int):
     """
