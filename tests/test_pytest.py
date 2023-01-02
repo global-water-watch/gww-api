@@ -22,7 +22,7 @@ class TestClass:
 
     def test_get_reservoir_ts(id=3001):
         # test if reservoir ts is retreived and has expected column header
-        assert cli.get_reservoir_ts(3001).json()[0]['name'] == 'surface_water_area_monthly'
+        assert cli.get_reservoir_ts(3001).json()[0]['name'] == 'surface_water_area'
 
     # def test_get_reservoirs_by_geom(_geom):
     #     assert type(_geom) == 'str'
