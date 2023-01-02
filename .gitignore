@@ -8,6 +8,7 @@
 !LICENSE
 !README.md
 !setup.py
+!requirements.txt
 
 # From wihtin folders, exclude:
 __pycache__/

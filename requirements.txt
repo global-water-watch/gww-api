@@ -1,0 +1,6 @@
+datetime
+geopandas 
+pandas 
+requests
+shapely 
+pytest
