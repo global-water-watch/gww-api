@@ -21,11 +21,19 @@ def _check_request(r):
         print(r.text)
         raise e
 
-def get_reservoirs(skip=1, limit=5, base_url=base_url):
+def get_reservoirs(skip=1, limit=5):
     """
-    Gets reservoirs from API. Return dict with IDs.
+    Gets reservoirs from API. Return list of reservoirs. Each list element is a dict representing a reservoir. The dict will contain the reservoir geometry and a set of reservoir properties. 
     
+    Args:
+        skip (int): How many reservoir to skip
+        limit (int): Max number of reservoirs that will be returned.
+    
+    Returns: 
+        reservoirs (list)
     """
+
+    
     url = f"{base_url}/reservoir"
     params = {
         "skip": skip,
@@ -34,31 +42,55 @@ def get_reservoirs(skip=1, limit=5, base_url=base_url):
 
     r = requests.get(url, params=params, timeout=2)
     _check_request(r)
-    return(r)
+    return(r.json())
 
-def get_reservoir(reservoir_id):
+def get_reservoir_by_id(reservoir_id:int):
     """
-    Get reservoir (geometry and props) by ID
+    Get reservoir (geometry and props) by ID.
+    
+    Args: 
+        reservoir_id (int): Global Water Watch ID. 
+    
+    Returns: 
+        requests.models.Response: Raw response object.
+
     """
+    
+
     url = f"{base_url}/reservoir/{reservoir_id}"
     
     r = requests.get(url)
     _check_request(r)
     return(r)
         
-def get_reservoirs_by_geom(geom, base_url=base_url):
+def get_reservoirs_by_geom(geom:str):
     """
-    Gets reservoirs from API. Return dict with IDs.
+    For a geometry, return the list of reservoirs in that geometry. Each element in the list is a dict containing reservoir geometry and properties.
+
+    Args: 
+        geom (str)
+    
+    Returns: 
+        reservoirs (list)
     """
+    
     url = f"{base_url}/reservoir/geometry"
     # do post request to end point with the serialized geometry as post data
     r = requests.post(url, data=geom)
     _check_request(r)
-    return(r)
+    return(r.json())
 
 def get_reservoir_ts(reservoir_id, start=start, stop=stop):
     """
-    Get time series data for reservoir with given ID
+    Get time series data for reservoir with given ID. This will return raw data. If you want to obtain post-processed monthly data, use the get_reservoir_ts_monthly function instead. 
+    
+    Args: 
+        reservoir_id (str): Global Water Watch Reservoir ID
+        start (datetime.datetime()): Start 
+        stop (datetime.datetime()): Stop
+    
+    Returns: 
+        requests.models.Response: Raw response object.
     """
     url = f"{base_url}/reservoir/{reservoir_id}/ts/surface_water_area"
     params = {
@@ -70,10 +102,20 @@ def get_reservoir_ts(reservoir_id, start=start, stop=stop):
     _check_request(r)
     return(r)
 
-def get_reservoir_ts_fitted(reservoir_id, start=start, stop=stop):
+def get_reservoir_ts_monthly(reservoir_id:int, start=start, stop=stop):
     """
-    Get time series data for reservoir with given ID
+    Get monthly time series data for reservoir with given ID. Monthly time series data is post-processed from the raw data. If you want to obtain the raw data, use the get_reservoir_ts function instead. 
+    
+    Args: 
+        reservoir_id (str): Global Water Watch Reservoir ID
+        start (datetime.datetime()): Start 
+        stop (datetime.datetime()): Stop
+    
+    Returns: 
+        requests.models.Response: Raw response object.
     """
+    
+
     url = f"{base_url}/reservoir/{reservoir_id}/ts/surface_water_area_monthly"
     params = {
         "start": start.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -101,10 +143,9 @@ def to_timeseries(data, name=None):
     if name is None:
         name = "area"
 
-    t_index = [p["t"] for p in data]
+    t_index = pd.to_datetime([p["t"] for p in data])
     v = [{name: p["value"]} for p in data]
-    pd.DatetimeIndex(t_index)
+
     return pd.DataFrame(
         v,
         index=pd.DatetimeIndex(t_index).date)
-
