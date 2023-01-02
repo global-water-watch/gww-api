@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-
-import geopandas as gpd
 import pandas as pd
 import requests
 from shapely.geometry import shape
@@ -11,7 +9,6 @@ base_url = "https://api.globalwaterwatch.earth"
 start = datetime.datetime(2010, 1, 1)
 stop = datetime.datetime(2022, 1, 1)
 
-# All functions making server requests
 def _check_request(r):
     """ Checks request """
     try:
@@ -125,27 +122,3 @@ def get_reservoir_ts_monthly(reservoir_id:int, start=start, stop=stop):
     r = requests.get(url, params=params)
     _check_request(r)
     return(r)
-
-# Utils
-def to_geopandas(data):
-    """
-    Ingests list of reservoirs and converts into a geopandas GeoDataFrame for further analyses
-    
-    """
-    geoms = [shape(f["geometry"]) for f in data]
-    props = [{**f["properties"], **{"id": f["id"]}} for f in data]
-    return gpd.GeoDataFrame(props, geometry=geoms, crs=4326)
-
-def to_timeseries(data, name=None):
-    """
-    Convert raw list of jsons to organized pandas.DataFrame
-    """
-    if name is None:
-        name = "area"
-
-    t_index = pd.to_datetime([p["t"] for p in data])
-    v = [{name: p["value"]} for p in data]
-
-    return pd.DataFrame(
-        v,
-        index=pd.DatetimeIndex(t_index).date)

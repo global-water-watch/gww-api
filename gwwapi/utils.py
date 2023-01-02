@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import datetime
 import geopandas as gpd
 import pandas as pd
-import requests
 from shapely.geometry import shape
 
 # Utils
@@ -26,9 +24,9 @@ def to_timeseries(data, name=None):
     if name is None:
         name = "area"
 
-    t_index = [p["t"] for p in data]
+    t_index = pd.to_datetime([p["t"] for p in data])
     v = [{name: p["value"]} for p in data]
-    pd.DatetimeIndex(t_index)
+
     return pd.DataFrame(
         v,
-        index=pd.DatetimeIndex(t_index).date)
+        index=t_index.date)
